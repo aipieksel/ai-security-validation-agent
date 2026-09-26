@@ -1,0 +1,8 @@
+name: AI Security Validation Agent
+description: |-
+  A controlled, evidence-driven security validation preset that consumes
+  reconnaissance reports and runs a deterministic validation engine
+  (scripts/validate.mjs). It verifies non-destructively observable findings
+  and produces prioritized remediation reports. It never performs exploitation,
+  credential attacks, bypasses, writes, or destructive requests.
+order: 20

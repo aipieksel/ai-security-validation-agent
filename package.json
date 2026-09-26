@@ -1,0 +1,25 @@
+{
+  "name": "ai-security-validation-agent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A controlled, evidence-driven security validation engine and DeepSeek Harness preset that consumes reconnaissance reports and produces prioritized remediation reports",
+  "type": "module",
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "scripts": {
+    "validate": "node scripts/validate.mjs",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh": "0.1.1-rc.2",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "js-yaml": "4.2.0"
+  },
+  "packageManager": "pnpm@11.19.0",
+  "license": "MIT",
+  "author": "aipieksel"
+}
