@@ -2,9 +2,15 @@
 
 Maintained by [aipieksel](https://github.com/aipieksel). Upstream credits and licenses remain with their respective authors.
 
-A controlled, evidence-driven **security validation** companion to the AI Security Reconnaissance Agent. It consumes reconnaissance reports and turns their observations into prioritized, reproducible remediation work.
+AI Security Validation Agent turns a reconnaissance report into a prioritized set of findings that an owner can inspect and remediate. It ingests the report and local artifacts, normalizes evidence, checks for common false positives, and produces Markdown, JSON, and HTML reports.
 
-It does **not** exploit live systems and does not ship exploit payloads. It runs a deterministic engine that performs local report analysis and, only when an authorization file explicitly permits it, bounded read-only checks such as DNS, TLS metadata, response headers, named public GET/HEAD resources, and optional **authorized confirmation** of those findings (cookie flags, redirect stay-on-allowlist, and GET re-checks of previously observed paths).
+Local analysis needs no model or network access. For a host you are authorized to assess, supply the target and allowlist flags to enable a bounded set of read-only DNS, TLS, header, and public GET/HEAD checks. Optional confirmation rechecks previously observed paths and response details. The engine enforces host and method limits in code; the [reconnaissance agent](https://github.com/aipieksel/ai-security-reconnaissance-agent) can supply its input, but is not required to run the CLI.
+
+## From report to remediation
+
+1. Put `RECON_REPORT.md` and any supporting `artifacts/` in a mission directory.
+2. Run local analysis first; add an authorized network pass only for an in-scope host.
+3. Review `VALIDATION_REPORT.md`, `findings.json`, and `report.html`, including their evidence and remediation guidance.
 
 ## Run without the Harness
 
@@ -32,7 +38,7 @@ Both modes write `VALIDATION_REPORT.md`, `findings.json`, and `report.html` into
 
 ## Run with the Harness
 
-The preset in `presets/ai-security-validation-agent/` tells a DeepSeek Harness session to drive the same engine through its Bash tool. Copy the preset into `$DSH_HOME/.agent-presets/ai-security-validation-agent/`, select it, and give it a mission workspace containing `RECON_REPORT.md` and an `AUTHORIZATION.md`.
+The preset in `presets/ai-security-validation-agent/` tells a DeepSeek Harness session to drive the same engine through its Bash tool. Copy the preset into `$DSH_HOME/.agent-presets/ai-security-validation-agent/`, select it, and give it a mission workspace containing `RECON_REPORT.md` and an `AUTHORIZATION.md`. The standalone CLI uses its explicit flags; it does not parse that authorization file.
 
 ## How it works
 
@@ -52,10 +58,10 @@ The preset in `presets/ai-security-validation-agent/` tells a DeepSeek Harness s
 
 The probe hard-blocks non-GET/HEAD methods, enforces the host allowlist and request budget, throttles requests, guards against private/loopback targets (SSRF), and stops on 429, repeated 5xx, or redirects off the allowlist.
 
-## Correctness fixes over the historical scanner
+## How findings avoid common false positives
 
 1. A single-page app's catch-all route (every path returns the same `index.html` with HTTP 200) is **not** treated as an exposed endpoint.
-2. Supabase `permission denied` (42501) and `function not found` (PGRST202) responses are recognized as protective outcomes, not data leaks.
+2. Supabase `permission denied` (42501) and `function not found` (PGRST202) responses are treated as protective outcomes, not data leaks.
 
 ## Explicitly prohibited
 
